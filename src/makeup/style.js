@@ -29,12 +29,10 @@ export const cssWrapper = css({
 });
 
 export const cssCam = css({
-  position: 'absolute',
-  top: 0,
   transform: 'scaleX(-1)',
   width: '100%',
   height: 'auto',
-  display: 'block',
+  display: 'none',
 });
 
 export const cssCanvasBase = css({
