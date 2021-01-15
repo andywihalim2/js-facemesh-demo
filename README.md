@@ -2,9 +2,7 @@
 
 Initial template for tf.js facemesh development demo
 
-use master branch to start with.
-
-for finished example use `finishedProject` branch
+use `master` branch to start with. For finished example use `finishedProject` branch.
 
 ## Available Scripts
 
