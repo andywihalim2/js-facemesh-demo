@@ -1,16 +1,52 @@
 import { css } from 'react-emotion';
 
+export const cssBackdrop = css({
+  position: 'fixed',
+  top: 0,
+  width: '100%',
+  height: '100%',
+  backgroundColor: '#fff',
+  opacity: 0.8,
+});
+
 export const cssCard = css({
-  position: 'relative',
-  borderRadius: 8,
+  borderRadius: '12px 12px 0px 0px',
   display: 'flex',
   alignItems: 'flex-end',
+  position: 'fixed',
   width: '100%',
-  maxWidth: 378,
+  maxHeight: '90%',
   overflow: 'hidden',
   boxShadow: '0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
-  margin: '0px auto',
+  bottom: 0,
+  '@media screen and (min-width: 420px)': {
+    maxWidth: 378,
+    borderRadius: 12,
+    top: '50%',
+    left: '50%',
+    bottom: 'auto',
+    transform: 'translate(-50%, -50%)',
+  }
 });
+
+export const cssLoading = hidden =>
+  css({
+    backgroundColor: '#222',
+    color: '#fff',
+    display: 'flex',
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    opacity: hidden ? 0 : 1,
+    visibility: hidden ? 'hidden' : 'visible',
+    transition: 'opacity .2s ease-in, visibility 0s linear .2s, .2s',
+    padding: 16,
+    boxSizing: 'border-box',
+  });
 
 export const cssControl = css({
   position: 'absolute',
@@ -29,12 +65,10 @@ export const cssWrapper = css({
 });
 
 export const cssCam = css({
-  position: 'absolute',
-  top: 0,
   transform: 'scaleX(-1)',
   width: '100%',
   height: 'auto',
-  display: 'block',
+  display: 'none',
 });
 
 export const cssCanvasBase = css({
@@ -76,8 +110,8 @@ export const cssCanvasDraw = css({
   top: 0,
   position: 'absolute',
   display: 'block',
-  // opacity: 0.25,
-  // filter: 'blur(5px)',
+  opacity: 0.25,
+  filter: 'blur(5px)',
   height: '100%',
   left: '50%',
   transform: 'translateX(-50%)',

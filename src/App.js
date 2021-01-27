@@ -1,13 +1,16 @@
-import Makeup from "./makeup"
+import { useState } from "react";
+import Makeup from "./components/makeup"
 
 const App = () => {
+  const [ show, setShow ] = useState(false);
 
   return (
     <>
       <div style={{textAlign: "center"}}>
         <h1>VIRTUAL TRY-ON DEMO</h1>
-        <Makeup/>
+        <button onClick={()=>{setShow(true)}}>Start TryOn</button>
       </div>
+      {show && <Makeup onClose={()=>{setShow(false)}} />}
     </>
   );
 }
