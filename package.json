@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "emotion": "9.2.12",
     "@tensorflow-models/face-landmarks-detection": "^0.0.2",
     "@tensorflow/tfjs-backend-webgl": "2.4.0",
     "@tensorflow/tfjs-converter": "2.4.0",
@@ -11,6 +10,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "emotion": "9.2.12",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-emotion": "9.2.12",

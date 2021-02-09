@@ -17,6 +17,7 @@ const drawPath = (ctx, points, closePath) => {
   ctx.fill(region);
 }
 
+
 export const paintingFace = (ctx, predictions, {skin, lip, eyeShadow}) => {
   let lipFlag = 0;
   let rightEyeFlag = 0;
@@ -37,9 +38,13 @@ export const paintingFace = (ctx, predictions, {skin, lip, eyeShadow}) => {
         ].map(index => keypoints[index]);
 
         //seperate face segmentation and set each segment's color
-        let drawColor = skin;
+
+        let drawColor = skin?.background || null;
+        let drawType = skin?.type || null;
+
         if (lipMesh[lipFlag] === i){
-          drawColor = lip;
+          drawColor = lip?.background;
+          drawType = lip?.type;
           lipFlag += 1;
         }
         else if(rightEyeMesh[rightEyeFlag] === i){
@@ -47,7 +52,8 @@ export const paintingFace = (ctx, predictions, {skin, lip, eyeShadow}) => {
           rightEyeFlag += 1;
         }
         else if(eyeShadow && rightEyeShadowMesh[rightEyeShadowFlag] === i){
-          drawColor = eyeShadow;
+          drawColor = eyeShadow?.background;
+          drawType = eyeShadow?.type;
           rightEyeShadowFlag += 1;
         }
         else if(leftEyeMesh[leftEyeFlag] === i){
@@ -55,12 +61,19 @@ export const paintingFace = (ctx, predictions, {skin, lip, eyeShadow}) => {
           leftEyeFlag += 1;
         }
         else if(eyeShadow && leftEyeShadowMesh[leftEyeShadowFlag] === i){
-          drawColor = eyeShadow;
+          drawColor = eyeShadow?.background;
+          drawType = eyeShadow?.type;
           leftEyeShadowFlag += 1;
         }
 
         /* do drawPath method if the color is not null */
         if(drawColor){
+          if(drawType === 'image') {
+            const image = new Image();
+            image.src = drawColor;
+            drawColor = ctx.createPattern(image, 'repeat');
+          };
+
           ctx.fillStyle = drawColor;
           ctx.strokeStyle = drawColor;
           drawPath(ctx, points, true)
