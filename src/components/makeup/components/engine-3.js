@@ -24,8 +24,8 @@ const Engine = ({ skin, lip, eyeShadow, onReady }) => {
   const canvasRef = useRef(null);
   const canvasCamRef = useRef(null);
   const webcamRef = useRef(null);
-  const VIDEO_WIDTH = 640;
-  const VIDEO_HEIGHT = 480;
+  const VIDEO_WIDTH = 405;
+  const VIDEO_HEIGHT = 720;
 
   useEffect(() => {
     if (ready) onReady();
@@ -39,55 +39,83 @@ const Engine = ({ skin, lip, eyeShadow, onReady }) => {
   }, [skin, lip, eyeShadow]);
 
   useEffect(() => {
+    /* semi-global var
+    shared for init and predictAndPaint method */
     let video = webcamRef.current;
     let canvas = canvasRef.current;
+    let canvasCam = canvasCamRef.current;
 
-    let videoWidth, videoHeight, model;
-    let camera, material, scene, renderer, geometry, predictions, positions;
+    let ctx, ctxCam, videoWidth, videoHeight, model;
+    let camera, material, scene, renderer, geometry, predictions;
     let recursive = true;
     const stats = new Stats();
 
-    const renderThree = async () => {
+    /* prediction and painting method */
+    const predictAndPaint = async () => {
+      /* capture Stats (fps) */
       stats.begin();
-  
-      requestAnimationFrame(renderThree);
+      /* get prediction/estimate values from video frame  */
 
-      if (positions.length === 0) return;
-
-      const positionBuffer = positions.reduce(
-        (acc, pos) => acc.concat(pos),
-        []
+      /* draw webcam frame for replacing actual webcam camera
+      to ensure painting canvas and video frame are sync */
+      ctxCam.drawImage(
+        video,
+        0,
+        0,
+        videoWidth,
+        videoHeight,
+        0,
+        0,
+        canvasCam.width,
+        canvasCam.height
       );
-      geometry.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(positionBuffer, 3)
-      );
-  
-      geometry.attributes.position.needsUpdate = true;
 
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-    
-      renderer.render(scene, camera);
-  
+      /* clear painting canvas every frame before next painting */
+      // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      /* get values of user-select colors in ref and do painting */
+      // const { skin, lip, eyeShadow } = color.current;
+      paintFace(predictions, { renderer, scene, camera, geometry });
+
+      /* Stat capture end */
       stats.end();
+
+      /* recall for next frame after current animation frame is done - recursive */
+      recursive && requestAnimationFrame(predictAndPaint);
     };
 
+    /* init method - will be call when component did mount */
     const init = async () => {
+      /* using tfjs backend webgl
+      also available: wasm, cpu - require deps + setup */
       await tf.setBackend("webgl");
+
       stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       wrapperRef.current.appendChild(stats.dom);
 
+      /* camera init */
       await setupCamera(video, VIDEO_WIDTH, VIDEO_HEIGHT);
       video.play();
       videoWidth = video.videoWidth;
       videoHeight = video.videoHeight;
 
+      /* sync video size to canvas */
       video.width = videoWidth;
       video.height = videoHeight;
       canvas.width = videoWidth;
       canvas.height = videoHeight;
+      canvasCam.width = videoWidth;
+      canvasCam.height = videoHeight;
 
+      /* initiate canvas for painting */
+      ctx = canvas.getContext("2d");
+      ctxCam = canvasCam.getContext("2d");
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctxCam.translate(canvasCam.width, 0);
+      ctxCam.scale(-1, 1);
+
+      /* load facemesh */
       model = await faceLandmarksDetection.load(
         faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
         {
@@ -99,18 +127,14 @@ const Engine = ({ skin, lip, eyeShadow, onReady }) => {
         }
       );
 
-      predictions = await model.estimateFaces({
-        input: video,
-      });
-
-      if(predictions.length === 0) return;
-      positions = predictions[0].scaledMesh;
-
+      /* initialize renderer */
       renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
-        canvas: canvas,
       });
+
+      renderer.setSize(canvas.width, canvas.height);
+      canvas.appendChild(renderer.domElement);
 
       /* create scene */
       scene = new THREE.Scene();
@@ -127,10 +151,22 @@ const Engine = ({ skin, lip, eyeShadow, onReady }) => {
 
       geometry = getGeometry();
 
-      await renderThree();
+      predictions = await model.estimateFaces({
+        input: video,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+
+      scene.add(mesh);
+
+      console.log(scene);
+
+      /* call prediction and paint method */
+      await predictAndPaint();
       setReady(true);
-    }
-  
+    };
+
+    /* call init method - only once and for forever */
     init();
 
     /* component unmount */
@@ -138,18 +174,17 @@ const Engine = ({ skin, lip, eyeShadow, onReady }) => {
       /* end predictAndPaint recursive call */
       recursive = false;
       /* stop webcam */
-      stopCamera(webcamRef);
+      stopCamera(video);
     };
   }, []);
 
   return (
     <div ref={wrapperRef} className={cssWrapper}>
-      {/* <video ref={webcamRef} playsInline className={cssCam} /> */}
-      <video ref={webcamRef} className={cssCanvasBase} />
-      <canvas ref={canvasRef} className={cssCanvasDraw} />
-      {/* <Resize>
+      <video ref={webcamRef} playsInline className={cssCam} />
+      <canvas ref={canvasCamRef} className={cssCanvasBase} />
+      <Resize>
         <canvas ref={canvasRef} className={cssCanvasDraw} />
-      </Resize> */}
+      </Resize>
     </div>
   );
 };
