@@ -60,7 +60,6 @@ export const paintingFace = (ctx, predictions, {skin, lip, eyeShadow}) => {
         if(drawColor){
           if(drawType === 'gradient') {
             var grd = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-            // var grd = ctx.createRadialGradient(238, 50, 10, 238, 50, 300);
             grd.addColorStop(0, drawColor?.[0]);
             grd.addColorStop(1, drawColor?.[1]);
             drawColor = grd

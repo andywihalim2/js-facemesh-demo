@@ -1,6 +1,6 @@
-import Engine from "./components/engine";
-import { useState } from "react";
-import { cssBackdrop, cssCard, cssControl, cssLoading } from "./style";
+import Engine from './components/engine';
+import { useState } from 'react';
+import { cssBackdrop, cssCard, cssControl, cssLoading } from './style';
 const skins = [
   null,
   {
