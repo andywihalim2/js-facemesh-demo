@@ -27,29 +27,20 @@ export const getCamera = (canvas) => {
 };
 
 export const getTextureMaterial = (image) => {
-  // const textureLoader = new THREE.TextureLoader();
-  // const texture = textureLoader.load(image);
-  // texture.encoding = THREE.sRGBEncoding;
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load(image);
+  texture.encoding = THREE.sRGBEncoding;
 
-  // texture.anisotropy = 16;
-  // const alpha = 0.4;
-  // const beta = 0.5;
+  texture.anisotropy = 16;
+  const alpha = 0.4;
+  const beta = 0.5;
 
-  // const material = new THREE.MeshPhongMaterial({
-  //   map: texture,
-  //   color: new THREE.Color(0xffffff),
-  //   specular: new THREE.Color(beta * 0.2, beta * 0.2, beta * 0.2),
-  //   reflectivity: beta,
-  //   shininess: Math.pow(2, alpha * 10),
-  // });
-
-
-  var textureLoader = new THREE.TextureLoader();
-  var texture = textureLoader.load('https://cdn.glitch.com/7e2396e4-e281-4571-900c-98413f3d9453%2Fjamini-mask.jpg?v=1595094022411');
-
-  var material = new THREE.MeshPhongMaterial({
+  const material = new THREE.MeshPhongMaterial({
     map: texture,
-    color: new THREE.Color(0xFF0000)
+    color: new THREE.Color(0xffffff),
+    specular: new THREE.Color(beta * 0.2, beta * 0.2, beta * 0.2),
+    reflectivity: beta,
+    shininess: Math.pow(2, alpha * 10),
   });
 
   return material;
@@ -70,11 +61,14 @@ export const getGeometry = () => {
 
 export const paintFace = ( predictions, { renderer, scene, camera, geometry }) => {
   if (predictions.length > 0) {
+
+    /* evaluate geometry position based on predictions value */
     const positionBuffer = predictions[0].scaledMesh.reduce(
       (acc, pos) => acc.concat(pos),
       []
     );
 
+    /* evaluate geometry position based on predictions value */
     geometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(positionBuffer, 3)

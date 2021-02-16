@@ -110,9 +110,9 @@ export const cssCanvasDraw = css({
   top: 0,
   position: 'absolute',
   display: 'block',
-  opacity: 0.25,
+  opacity: 0.5,
   filter: 'blur(5px)',
   height: '100%',
   left: '50%',
-  transform: 'translateX(-50%)',
+  transform: 'translateX(-50%) scaleX(-1)',
 });
