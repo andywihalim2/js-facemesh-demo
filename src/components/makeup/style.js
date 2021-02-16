@@ -46,6 +46,7 @@ export const cssLoading = hidden =>
     transition: 'opacity .2s ease-in, visibility 0s linear .2s, .2s',
     padding: 16,
     boxSizing: 'border-box',
+    flexDirection: 'column',
   });
 
 export const cssControl = css({

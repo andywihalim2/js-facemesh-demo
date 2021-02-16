@@ -79,63 +79,49 @@ const Makeup = ({ onClose }) => {
           onReady={handleReady}
         />
         <div className={cssControl}>
-          {skins.map((each, index) => {
-            return (
-              <button
-                type="button"
-                key={index}
-                onClick={() => {
-                  setActiveSkin(index);
-                }}
-              >
-                {each?.name || "nomakeup"}
-              </button>
-            );
-          })}
+          {skins.map((each, index) =>  (
+            <button
+              type="button"
+              key={index}
+              onClick={() => setActiveSkin(index)}
+            >
+              {each?.name || "nomakeup"}
+            </button>
+          ))}
           <br />
-          {shadow.map((each, index) => {
-            return (
-              <button
-                type="button"
-                key={index}
-                onClick={() => {
-                  setActiveEyeShadow(index);
-                }}
-              >
-                {each?.name || "noShadow"}
-              </button>
-            );
-          })}
+          {shadow.map((each, index) => (
+            <button
+              type="button"
+              key={index}
+              onClick={() => setActiveEyeShadow(index)}
+            >
+              {each?.name || "noShadow"}
+            </button>
+          ))}
           <br />
-          {lips.map((each, index) => {
-            return (
-              <button
-                type="button"
-                key={index}
-                onClick={() => {
-                  setActiveLip(index);
-                }}
-              >
-                {each?.name || "noLipstick"}
-              </button>
-            );
-          })}
+          {lips.map((each, index) => (
+            <button
+              type="button"
+              key={index}
+              onClick={() => setActiveLip(index)}
+            >
+              {each?.name || "noLipstick"}
+            </button>
+          ))}
         </div>
         <div className={cssLoading(started)}>
-          <div>
-            <h3>Virtual TryOn</h3>
-            <p>
-              You can try-on lipstick, eyeshadow, and foundation virtually.
-              Please allow your webcam access permission to try this feature.
-            </p>
-            {!ready ? (
-              "LOADING..."
-            ) : (
-              <button type="button" onClick={handleStart}>
-                GETTING STARTED
-              </button>
-            )}
-          </div>
+          <h3>Virtual TryOn</h3>
+          <p>
+            You can try-on lipstick, eyeshadow, and foundation virtually.
+            Please allow your webcam access permission to try this feature.
+          </p>
+          {!ready ? (
+            "LOADING..."
+          ) : (
+            <button type="button" onClick={handleStart}>
+              GETTING STARTED
+            </button>
+          )}
         </div>
       </div>
     </>
